@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDENTITY - FSOCIETY DATABASE</title>
+    <style>
+        body {
+            background-color: black;
+            color: #00FF41;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Sembunyikan scrollbar selama intro */
+            height: 100vh;
+        }
+
+        /* --- STYLING ART (WAJAH & BINTANG) --- */
+        #face-art {
+            color: #00FF41;
+            font-size: 5px; /* Sesuaikan agar wajah muat di kiri */
+            line-height: 5px;
+            white-space: pre;
+            opacity: 0.8;
+        }
+
+        #star-art {
+            color: #00FF41;
+            font-size: 8px; /* Bintang gede banget di kanan */
+            line-height: 8px;
+            white-space: pre;
+            transform-origin: center;
+            display: inline-block;
+        }
+
+        /* ANIMASI BINTANG MUTER PELAN (INTRO) */
+        .spin-slow {
+            animation: spin 5s linear infinite;
+        }
+
+        /* ANIMASI BINTANG MUTER KENCENG (PROFILE) */
+        .spin-fast {
+            animation: spin 0.5s linear infinite; /* Jauh lebih cepat */
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- LAYER 1: LOADING INTRO (FULLSCREEN) --- */
+        #intro-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            justify-content: center; /* Wajah di kiri, bintang di kanan */
+            align-items: center;
+            gap: 50px; /* Jarak antara wajah dan bintang */
+            z-index: 10;
+            background-color: black;
+        }
+
+        #decrypt-status {
+            position: absolute;
+            bottom: 20px;
+            text-align: center;
+            width: 100%;
+            color: #00FF41;
+            font-size: 14px;
+        }
+
+        /* --- LAYER 2: PROFILE CONTENT (SEMBUNYI DULU) --- */
+        #profile-layer {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: relative;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+            z-index: 5;
+        }
+
+        .profile-content-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 100px; /* Jarak profile dengan bintang yang muter kenceng */
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #00FF41;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .profile-container {
+            border: 1px solid #00FF41;
+            padding: 20px;
+            width: 100%;
+            max-width: 500px;
+            background: rgba(0, 255, 65, 0.05);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+        }
+
+        .info-row {
+            margin: 15px 0;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed rgba(0, 255, 65, 0.3);
+            padding-bottom: 5px;
+        }
+
+        .label { font-weight: bold; color: #fff; }
+        
+        .glitch-text { animation: glitch 1s linear infinite; }
+        @keyframes glitch {
+            2%, 64% { transform: translate(2px,0) skew(0deg); }
+            4%, 60% { transform: translate(-2px,0) skew(0deg); }
+            62% { transform: translate(0,0) skew(5deg); }
+        }
+
+        .btn-back {
+            margin-top: 30px;
+            background: transparent;
+            border: 1px solid #00FF41;
+            color: #00FF41;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+        .btn-back:hover { background: #00FF41; color: black; }
+
+        /* Container bintang yang dipindah ke profile layer */
+        #profile-star-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    
+    body {
+        background-color: black;
+        color: #00FF41;
+        font-family: 'Courier New', monospace;
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* Ini sudah benar untuk menyembunyikan scrollbar */
+        height: 100vh;
+    }
+
+    /* --- TAMBAHKAN INI UNTUK MENGHILANGKAN GARIS PUTIH TOTAL --- */
+    body::-webkit-scrollbar {
+        display: none; /* Menghilangkan visual scrollbar di Chrome/Edge/Safari */
+    }
+
+    html {
+        overflow: hidden; /* Memastikan level paling atas juga tidak ada scroll */
+        -ms-overflow-style: none;  /* Untuk Internet Explorer dan Edge lama */
+        scrollbar-width: none;  /* Untuk Firefox */
+    }
+    
+    /* ... sisa kode style kamu yang lain ... */
+
+    </style>
+</head>
+<body>
+    <audio id="bgMusic" loop>
+        <source src="bg.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="intro-layer">
+        <div id="face-art">
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@#######################################################%%%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@%##@@@@@@@@@@@@@@@@@@@@%%%%%%%%%%%%%%%%@@@@@@@@@@@@@@%%%%%##@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%@@@@@@@@@@@@@@@@%%%%%%%%%%%%%%%%%%%%%@@@@@@@@@@@@@@@@@@%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@%##@@@@@@@@@@@%%############################%%@@@@@@@@@@@@%#@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%@@@@@@@@@%%%%%%%%%%%%%%%%%%%%%%%%%%%#%%######%%@@@@@@@@%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@#%@@@@@@%##############################%%%%%%%%%%%%@@@@@@%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@#%@@@@%#############################################%%@@@%#@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%@@@%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@@@%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@##%%###################################################%%##@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%###%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@#####################################################%####%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%##########################################################@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%@@@%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@##@@@@%###%%@@@%@@@%%%################%%%%%%%%%%#####%@@@%#@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%%%@@@%@@@@@@@@@@@@@@@@%%%%%%%%%%%%@@@@@@@@@@@@@@%%%@@@@%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@##%%@@%%%@%%#####%%@@@@@@%#######%%@@@@@@%%###%%@@@%%@@%%#%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%@@@@@%%%%%%%%%%%%%@@@@@@@%%#%%@@@@@@@%%###########%@@@@%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@##%%%@%###############%@@@@%##%%@@@@@%%%%%%%%%%%%%%%@@@%%%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@##@@%#############%%#################################%%@@##@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%%%%%%%%@%%%%%@@@@@@@@%%%%%%%%%%%%%%@@@@@@@%%%%%%%%%%%%%%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@############%@@@@@@@@@@%############%@@@@@@@@%####%########@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%%%%%%%%%%%@@@@@@@@@@@@%%%%%%%%%%%%@@@@@@@@@@%###########%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@###########%%@%%%%%@@@@%##%%%%%##%%%@@@@@%%@@@%%%%%%%%%%%%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%###################################%%#####################@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%%%%%%%%%%%%%%%%%%%%%%%%@@%%%%%%@@%%%%%%%%%%%%%%%%%%%%%%%@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@#######%%%########################%###############%#######%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%%%%%@@@%%%%%%%%%%%%%@@%%%%%%%%%%%%%%%%%%%%%%%%%%@@@%%%%%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@#####@@@@#############%%%#########%%%%###########%@@@%####%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%%%%@@@@@%%%%%%%%%%@@@@@@%%%###%@@@@@@%%########%@@@@%###%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%###%@@@@@@%%##%%@@@@@@@@@@@%%%@@@@@@@@@@@@%%%%%%@@@@@@%%%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%###%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%@@@@@@@@@###%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%%%%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%%%@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@##%%%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@####%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@##@@@%%%%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%%%@@@%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%#@@@@%###########%@@@@@@%%%%%%%%%%@@@@@@%###########@@@@#%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%@@@@@%%%%%%%%%%%%%@@@@@@@@@@@@@@@@@@@@%%%%%%%%%%%%@@@@@%@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@##@@@@@@#############%@@@@@@@@@@@@@@@%%#############@@@@@#%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@%@@@@@@%%%%%%%%%%%%%%%%@@@@@@@@@@@@%%%%%%%%%%%%%%%@@@@@@%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@##@@@@@@%##################%%%%%%###############%#%@@@@@@%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%@@@@@@@%%%%%%%%%%%%%%%%#########################%@@@@@@#%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%#@@@@@@@%%#%%##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@@@@@@%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%@@@@@@@@%######################################@@@@@@@@#%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%@@@@@@@@@@%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@@@@@@@@%@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%#@@@@@@@@@@%#################################%@@@@@@@@@@#%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@@@@@@@@@@@%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%#@@@@@@@@@@@@@@%##########################@@@@@@@@@@@@@@%%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%@@@@@@@@@@@@@@@@%%%%%#################%%@@@@@@@@@@@@@@@#%@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@%%@@@@@@@@@@@@@@@@@%%#####%%%%%%%%%%%%%%@@@@@@@@@@@@@@@@@%@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+</div>
+
+        <div id="intro-star-container">
+            <div id="star-art" class="spin-slow">
+                                                                                                   
+                                                 +                                                 
+                                                 %:                                                
+                                                #%+                                                
+                                                 %--                                               
+                                               *.%-=                                               
+                                               ..%--=                                              
+                                              *..%---                                              
+                                             ....#---+                                             
+                                             +:..#---:                                             
+                                            .....#---=+                                            
+                                            -:...#----:                                            
+                                           :.....#----=+                                           
+                                           :.....#-----:                                           
+                                          -:.....#-----==                                          
+                                          .......#------:.                                         
+                                         --......#------=-                                         
+                                         ........#--------:                                        
+                                        -=.......#--------:                                        
+                                         ........#--------=:                                  ..:=+
+ .-+=#-........   ..:=+##%#+=:.        -+........#---------.  :-=+#%%#*=-:.    .............+##=#. 
+     :=---**:..........................::........#--------:...........................+%#=---+:    
+        -=------*#.......................=-......*------+=....................::+##-------=:       
+           ==---------++:::................:.....*------................--=#*=-----------          
+              ==------------+-.-:...........=:...*---==..........:=--**=-----------+:-             
+                 ==---------------+=:=:.......=..*--+......:===+*---------------+::                
+                    -=------------------=--+:..--*--.:++=++------------------+::                   
+                       -=---------------------=:=%*==---------------------+-.                      
+                          -=---------------+#:..**-=--*+---------------=+                          
+                             :=-------=#-.....---*--#-----=#=--------*                             
+                                :+#..........*---*---=---------=#-#                                
+                                :..........:-----*-----=----------:                                
+                               ...........==-----*-----=+----------.                               
+                               =........:=-------*-------=---------+                               
+                              =........:---------*--------==--------+                              
+                             +.......:==---------*----------*=-------+                             
+                            -.......:+-----------#---------------------                            
+                            .......:-----------#.  :-----------+------:                            
+                           .......%----------:       .*---------%-------                           
+                          =:....:=--------+-           :+--------------=+                          
+                         --....+---------:                :--------*----=-                         
+                        ::...-+------+-                     -+------==----:                        
+                       .:...-------=-                         ::------=---:                        
+                       .:.:=----+.                               :*----+=-=:                       
+                      .:.==---*:                                   -+---=+-=:                      
+                     :+.:--=:                                         :=----+:                     
+                    :=-*-*-                                             -*-*+=.                    
+                    .:=-:                                                 :-==.                    
+                   :*=                                                       =#:                   
+                   =                                                           =                   
+                                                                                                   </div>
+        </div>
+
+        <div id="decrypt-status">> Decrypting identity profile for TARGET: ALETHA... Please wait. <span id="loading-dots">...</span></div>
+    </div>
+
+    <div id="profile-layer">
+        <div class="header">
+            <h1 class="glitch-text">PERSONA IDENTITY DECRYPTED</h1>
+        </div>
+
+        <div class="profile-content-wrapper">
+            <div class="profile-container">
+                <div class="info-row"><span class="label">Full Name:</span><span>KZEENBOM</span></div>
+                <div class="info-row"><span class="label">ERROR:</span><span>??????????</span></div>
+                <div class="info-row"><span class="label">Device:</span><span>HERX</span></div>
+                <div class="info-row"><span class="label">ERROR:</span><span>???????????</span></div>
+                <div class="info-row"><span class="label">Vercel Host:</span><span>aletha-ai.vercel.app</span></div>
+            </div>
+
+            <div id="profile-star-container">
+                </div>
+        </div>
+
+        <button class="btn-back" onclick="window.location.href='terminal.html'">LOGOUT / EXIT</button>
+</div> <script>
+   
+    // Taruh di baris ini (sekitar 315)
+    const validReferrer = document.referrer.includes("terminal.html");
+    
+    if (document.referrer !== "" && !validReferrer) {
+        window.location.replace("terminal.html");
+    }
+
+    // Kode kamu yang sudah ada di bawahnya:
+    const introLayer = document.getElementById('intro-layer');
+    const profileLayer = document.getElementById('profile-layer');
+    // ... dan seterusnya
+    const starArt = document.getElementById('star-art');
+    const profileStarContainer = document.getElementById('profile-star-container');
+
+    // 3. Logika Loading & Transisi
+    window.onload = () => {
+        setTimeout(() => {
+            if (introLayer) introLayer.style.display = 'none';
+            
+            if (profileStarContainer && starArt) {
+                profileStarContainer.appendChild(starArt);
+                starArt.classList.remove('spin-slow');
+                starArt.classList.add('spin-fast');
+            }
+
+            if (profileLayer) {
+                profileLayer.style.display = 'flex';
+                setTimeout(() => {
+                    profileLayer.style.opacity = '1';
+                }, 100);
+            }
+        }, 10000); // 10 detik loading
+    };
+</script>
+    <script src="audio-handler.js"></script> 
+</body>
+</html>
